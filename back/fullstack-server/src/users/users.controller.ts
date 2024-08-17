@@ -15,7 +15,6 @@ export class UsersController {
   }
 */
   @UseGuards(JwtAuthGuard)
-
   @Post('add-user')
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
@@ -33,7 +32,7 @@ export class UsersController {
   }
 
 
-  @Delete(':id')
+  @Delete('delete-user/:id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }

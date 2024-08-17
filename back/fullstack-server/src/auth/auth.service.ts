@@ -17,18 +17,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
-/*
-  async register(user: DTOSHKA): Promise<AccessToken> {
-    const existingUser = this.usersService.findOneByEmail(user.email);
-    if (existingUser) {
-      throw new BadRequestException('email already exists');
+  /*
+    async register(user: DTOSHKA): Promise<AccessToken> {
+      const existingUser = this.usersService.findOneByEmail(user.email);
+      if (existingUser) {
+        throw new BadRequestException('email already exists');
+      }
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      const newUser: User = { ...user, password: hashedPassword };
+      await this.usersService.create(newUser);
+      return this.login(newUser);
     }
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-    const newUser: User = { ...user, password: hashedPassword };
-    await this.usersService.create(newUser);
-    return this.login(newUser);
-  }
-*/
+  */
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
     if (user && user.password === password) {
@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   async login(user: User): Promise<AccessToken> {
-    const payload: JwtPayload = { email: user.email, sub: user.id };
+    const payload: JwtPayload = { email: user.email, sub: user.password };
     return {
       access_token: this.jwtService.sign(payload),
     };
