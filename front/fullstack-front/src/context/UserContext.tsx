@@ -1,31 +1,47 @@
-import React, { ReactNode, createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface User {
-  username: string;
-  isLoggedIn: boolean;
-}
-
-interface UserContextType {
-  user: User | null;
-  login: (username: string) => void;
+type UserContextType = {
+  isAuthenticated: boolean;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => void;
-}
+  user: string | null;
+};
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+type UserProviderProps = {
+  children: ReactNode;
+};
 
-  const login = (username: string) => {
-    setUser({ username, isLoggedIn: true });
+export const UserProvider = ({ children }: UserProviderProps) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<string | null>(null);
+
+  const login = async (username: string, password: string) => {
+    const response = await fetch('http://localhost:3001/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+      setIsAuthenticated(true);
+      setUser(username);
+      console.log(username);
+    } else {
+      alert('Invalid credentials');
+    }
   };
 
   const logout = () => {
+    setIsAuthenticated(false);
     setUser(null);
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ isAuthenticated, login, logout, user }}>
       {children}
     </UserContext.Provider>
   );
@@ -34,7 +50,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error('useAuth must be used within an UserProvider');
   }
   return context;
 };

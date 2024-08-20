@@ -2,28 +2,43 @@ import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 
-const Login: React.FC = () => {
-  const { login } = useUser();
+const LoginForm: React.FC = () => {
+  const { login, isAuthenticated } = useUser();
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    login(username);
-    navigate('/user');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await login(username, password);
+    if (isAuthenticated) navigate('/user');
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Enter username"
-      />
-      <button onClick={handleLogin}>Login</button>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>
+          Username:
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </label>
+      </div>
+      <div>
+        <label>
+          Password:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+      </div>
+      <button type="submit">Login</button>
+    </form>
   );
 };
 
-export default Login;
+export default LoginForm;

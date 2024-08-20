@@ -17,18 +17,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
-  /*
-    async register(user: DTOSHKA): Promise<AccessToken> {
-      const existingUser = this.usersService.findOneByEmail(user.email);
-      if (existingUser) {
-        throw new BadRequestException('email already exists');
-      }
-      const hashedPassword = await bcrypt.hash(user.password, 10);
-      const newUser: User = { ...user, password: hashedPassword };
-      await this.usersService.create(newUser);
-      return this.login(newUser);
-    }
-  */
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
     if (user && user.password === password) {

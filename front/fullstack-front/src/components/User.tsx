@@ -1,27 +1,19 @@
 import React from 'react';
 import { useUser } from '../context/UserContext';
-import { useNavigate } from 'react-router-dom';
 
-const User: React.FC = () => {
-  const { user, logout } = useUser();
-  const navigate = useNavigate();
+const UserProfile: React.FC = () => {
+  const { user, logout, isAuthenticated } = useUser();
 
-  if (!user || !user.isLoggedIn) {
-    return <p>Please log in first.</p>;
+  if (!isAuthenticated) {
+    return <p>Please log in to view your profile.</p>;
   }
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   return (
     <div>
-      <h1>User Page</h1>
-      <p>Welcome, {user.username}!</p>
-      <button onClick={handleLogout}>Logout</button>
+      <h2>Welcome, {user}!</h2>
+      <button onClick={logout}>Logout</button>
     </div>
   );
 };
 
-export default User;
+export default UserProfile;
