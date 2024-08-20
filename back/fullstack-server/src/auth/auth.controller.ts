@@ -18,7 +18,6 @@ export class AuthController {
   async login(@Body() body: { username: string; password: string }) {
     const { username, password } = body;
     const isValidUser = await this.authService.validateUser(username, password);
-    console.log(body, isValidUser);
     if (!isValidUser) {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
