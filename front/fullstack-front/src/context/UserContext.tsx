@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type UserContextType = {
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   user: string | null;
 };
@@ -17,7 +17,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<string | null>(null);
 
-  const login = async (username: string, password: string) => {
+  const login = async (
+    username: string,
+    password: string,
+  ): Promise<boolean> => {
     const response = await fetch('http://localhost:3001/auth/login', {
       method: 'POST',
       headers: {
@@ -29,12 +32,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     if (response.ok) {
       setIsAuthenticated(true);
       setUser(username);
-      console.log(username);
+      return true;
     } else {
       alert('Invalid credentials');
+      setIsAuthenticated(false);
+      return false;
     }
   };
-
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
